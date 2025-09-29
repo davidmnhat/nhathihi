@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đèn Trời Bay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0a1628 0%, #1a2842 100%);
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .sky {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .moon {
+            position: absolute;
+            top: 80px;
+            right: 120px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #fff 0%, #f0f0f0 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.6);
+        }
+
+        .lantern {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .lantern:hover {
+            transform: scale(1.1);
+        }
+
+        .lantern-body {
+            width: 40px;
+            height: 60px;
+            background-image: url('longden.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            filter: drop-shadow(0 0 15px rgba(255, 140, 50, 0.9)) drop-shadow(0 0 30px rgba(255, 107, 53, 0.5));
+        }
+
+        .lantern-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 25px;
+            height: 35px;
+            background: radial-gradient(ellipse, rgba(255, 255, 150, 0.9) 0%, transparent 70%);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255, 107, 53, 0.8);
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content p {
+            color: #fff;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: white;
+            color: #ff6b35;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #ff6b35;
+            color: white;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="sky" id="sky">
+        <div class="moon"></div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">chị Dân lùn haha</h2>
+            <p id="modalMessage">Chúc chị có một ngày tuyệt vời!</p>
+            <button class="close-btn" onclick="closeModal()">Đóng</button>
+        </div>
+    </div>
+
+    <script>
+        const messages = [
+            { title: "Em Nhật dấu iu", message: "Chúc chị luôn tràn đầy niềm vui và hạnh phúc!" },
+            { title: "Em Nhật iu dấu", message: "Mong chị đạt được mọi mục tiêu đã đề ra!" },
+            { title: "Bà già đáng ghét", message: "Chúc chị luôn mạnh khỏe và tràn đầy năng lượng!" },
+            { title: "Chị Dân lùn hahaha", message: "Gửi đến chị những điều may mắn nhấtttt hehe!" },
+            { title: "Lạnh lùng gơ", message: "Chúc chị luôn bình an và được che chở!" },
+            { title: "Vịu ơ", message: "Đừng phũ phàng em nữaaaa!" },
+            { title: "haha hehe", message: "Hy vọng mọi ước mơ của chị đều thành hiện thực!" },
+            { title: "Nhớ em điii", message: "Nhắn e nhiều lênnnnn" },
+            { title: "Dẫy nhaaaaa", message: "Từ từ có chồngggggg hoặc đừng :))))" },
+            { title: "Ngại qó hò kkk", message: "chờ emmmm nhaaaa <3 <3 <3" },
+        ];
+
+        const sky = document.getElementById('sky');
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+
+        // Tạo sao
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            sky.appendChild(star);
+        }
+
+        // Tạo đèn trời
+        function createLantern() {
+            const lantern = document.createElement('div');
+            lantern.className = 'lantern';
+            
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight + 100;
+            
+            lantern.style.left = startX + 'px';
+            lantern.style.top = startY + 'px';
+            
+            const messageData = messages[Math.floor(Math.random() * messages.length)];
+            
+            lantern.innerHTML = `
+                <div class="lantern-string"></div>
+                <div class="lantern-top"></div>
+                <div class="lantern-body">
+                    <div class="lantern-glow"></div>
+                </div>
+                <div class="lantern-bottom"></div>
+            `;
+            
+            lantern.addEventListener('click', () => {
+                modalTitle.textContent = messageData.title;
+                modalMessage.textContent = messageData.message;
+                modal.classList.add('active');
+            });
+            
+            sky.appendChild(lantern);
+            
+            animateLantern(lantern, startX, startY);
+        }
+
+        function animateLantern(lantern, startX, startY) {
+            let y = startY;
+            let x = startX;
+            const speed = 0.9 + Math.random() * 0.8;
+            const drift = (Math.random() - 0.5) * 0.5;
+            const sway = Math.random() * 20 - 10;
+            let time = 0;
+            
+            function animate() {
+                y -= speed;
+                x += drift + Math.sin(time * 0.02) * sway * 0.1;
+                time++;
+                
+                lantern.style.top = y + 'px';
+                lantern.style.left = x + 'px';
+                
+                if (y < -100 || x < -100 || x > window.innerWidth + 100) {
+                    lantern.remove();
+                } else {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            animate();
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Tạo đèn trời liên tục
+        setInterval(createLantern, 800);
+        
+        // Tạo một số đèn ban đầu
+        for (let i = 0; i < 15; i++) {
+            setTimeout(createLantern, i * 300);
+        }
+    </script>
+</body>
+</html>
