@@ -268,23 +268,28 @@
     </div>
 
     <script>
-        // ⭐ DANH SÁCH LỜI NHẮN
+        //  DANH SÁCH LỜI NHẮN
         const textMessages = [
             { title: "Em Nhật dấu iu", message: "Chúc chị luôn tràn đầy niềm vui và hạnh phúc!" },
-            { title: "Bà già đáng ghét", message: "Chúc chị luôn mạnh khỏe và tràn đầy năng lượng!" },
-            { title: "Lạnh lùng gơ", message: "Chúc chị luôn bình an và được che chở!" },
-            { title: "Vịu ơ", message: "Đừng phũ phàng em nữaaaa!" },
-            { title: "haha hehe", message: "Hy vọng mọi ước mơ của chị đều thành hiện thực!" },
+            { title: "Bà già đáng ghét", message: "Chúc chị luôn mạnh khỏe và tràn đầy năng lượng" },
+            { title: "Vịu ơ", message: "Đừng phũ phàng em nữaaaa" },
             { title: "Nhớ em điii", message: "Nhắn e nhiều lênnnnn" },
             { title: "Dẫy nhaaaaa", message: "Từ từ có chồngggggg hoặc đừng :))))" },
             { title: "Ngại qó hò kkk", message: "chờ emmmm nhaaaa <3 <3 <3" },
         ];
 
-        // 🖼️ DANH SÁCH HÌNH ẢNH
+        //  DANH SÁCH HÌNH ẢNH
         const imageMessages = [
-            { title: "💝", image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400" },
-            { title: "🌸", image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400" },
-            { title: "✨", image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400" },
+            { title: "hùuuu", image: "https://i.postimg.cc/4Nd1B2yn/IMG-0538-1.jpg" },
+            { title: "ố là la kakaka", image: "https://i.postimg.cc/y882hT4T/1-IVABCIGL-3-LJ937.jpg" },
+            { title: "úm ba la", image: "https://i.postimg.cc/Z55XPLtj/e5fecf1a2b9832edbf765c0b12d6f67d.jpg" },
+            { title: "Chị Dân lùn", image: "https://i.postimg.cc/Vkk29FQW/fe90d974049332a23736e6e228164df7.jpg" },
+            { title: "ehehehehe", image: "https://i.postimg.cc/jdF496nv/IMG-20250603-162814.jpg" },
+            //{ title: "nhớ em đi mò", image: "https://i.postimg.cc/xdryj0RV/T-p-000.png" },
+            //{ title: "đừng lạnh lùng vị mà", image: "https://i.postimg.cc/QCXV0zqT/769036c1bc68b8b36b4b3d7a533815c0.jpg" },
+            //{ title: "chúc e ngủ ngoan điii", image: "https://i.postimg.cc/gjNj5KMj/z7065059254590-06d1d4bfc86527ec2803fa4e90feab97.jpg" },
+            //{ title: "mất ngủ vì chụy <3", image: "https://i.postimg.cc/Dyw8GtZL/d364c8fb4ac538242c1f5961226c9978.jpg" },
+            //{ title: "thần men đại bịp", image: "https://i.postimg.cc/9Q408ZyF/fd798204396855667400084f46147193.jpg" },
         ];
 
         const sky = document.getElementById('sky');
@@ -370,7 +375,7 @@
         function animateLantern(lantern, startX, startY) {
             let y = startY;
             let x = startX;
-            const speed = 1.2 + Math.random() * 0.6; // Tăng tốc độ bay
+            const speed = 1 + Math.random() * 0.8; // Tăng tốc độ bay
             const drift = (Math.random() - 0.5) * 0.3;
             const sway = Math.random() * 15 - 7.5;
             let time = 0;
@@ -405,7 +410,7 @@
         });
 
         // Tăng thời gian spawn đèn lên
-        const spawnInterval = window.innerWidth < 768 ? 1200 : 1000;
+        const spawnInterval = window.innerWidth < 768 ? 1000 : 1000;
         setInterval(createLantern, spawnInterval);
         
         // Giảm số đèn ban đầu
