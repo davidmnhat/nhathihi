@@ -32,6 +32,7 @@
             border-radius: 50%;
             opacity: 0.8;
             animation: twinkle 3s infinite;
+            will-change: opacity;
         }
 
         @keyframes twinkle {
@@ -63,6 +64,7 @@
             position: absolute;
             cursor: pointer;
             transition: transform 0.2s;
+            will-change: transform;
         }
 
         .lantern:active {
@@ -77,8 +79,7 @@
             border-radius: 40% 40% 35% 35%;
             box-shadow: 
                 0 0 15px rgba(255, 140, 50, 0.9),
-                0 0 30px rgba(255, 107, 53, 0.5),
-                inset 0 -10px 20px rgba(0, 0, 0, 0.3);
+                0 0 30px rgba(255, 107, 53, 0.5);
         }
 
         .lantern-body::before {
@@ -91,7 +92,6 @@
             height: 10px;
             background: #8b0000;
             border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
         .lantern-body::after {
@@ -104,7 +104,6 @@
             height: 10px;
             background: #8b0000;
             border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
         .lantern-tassel {
@@ -152,7 +151,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -164,10 +163,12 @@
 
         .modal-content {
             background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-            padding: 40px;
+            padding: 30px;
             border-radius: 20px;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
             text-align: center;
             box-shadow: 0 0 40px rgba(255, 107, 53, 0.8);
             animation: modalAppear 0.3s ease-out;
@@ -193,11 +194,25 @@
 
         @media (max-width: 768px) {
             .modal-content {
-                padding: 30px 20px;
+                padding: 20px;
             }
             .modal-content h2 {
                 font-size: 20px;
             }
+        }
+
+        .modal-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .modal-image.show {
+            display: block;
         }
 
         .modal-content p {
@@ -205,6 +220,11 @@
             font-size: 18px;
             line-height: 1.6;
             margin-bottom: 20px;
+            display: none;
+        }
+
+        .modal-content p.show {
+            display: block;
         }
 
         @media (max-width: 768px) {
@@ -223,6 +243,7 @@
             font-size: 16px;
             font-weight: bold;
             transition: all 0.3s;
+            margin-top: 10px;
         }
 
         .close-btn:active {
@@ -239,18 +260,18 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modalTitle">chị Dân lùn haha</h2>
-            <p id="modalMessage">Chúc chị có một ngày tuyệt vời!</p>
+            <h2 id="modalTitle"></h2>
+            <img id="modalImage" class="modal-image" src="" alt="Ảnh">
+            <p id="modalMessage"></p>
             <button class="close-btn" onclick="closeModal()">Đóng</button>
         </div>
     </div>
 
     <script>
-        const messages = [
+        // ⭐ DANH SÁCH LỜI NHẮN
+        const textMessages = [
             { title: "Em Nhật dấu iu", message: "Chúc chị luôn tràn đầy niềm vui và hạnh phúc!" },
-            { title: "Em Nhật iu dấu", message: "Mong chị đạt được mọi mục tiêu đã đề ra!" },
             { title: "Bà già đáng ghét", message: "Chúc chị luôn mạnh khỏe và tràn đầy năng lượng!" },
-            { title: "Chị Dân lùn hahaha", message: "Gửi đến chị những điều may mắn nhấtttt hehe!" },
             { title: "Lạnh lùng gơ", message: "Chúc chị luôn bình an và được che chở!" },
             { title: "Vịu ơ", message: "Đừng phũ phàng em nữaaaa!" },
             { title: "haha hehe", message: "Hy vọng mọi ước mơ của chị đều thành hiện thực!" },
@@ -259,13 +280,22 @@
             { title: "Ngại qó hò kkk", message: "chờ emmmm nhaaaa <3 <3 <3" },
         ];
 
+        // 🖼️ DANH SÁCH HÌNH ẢNH
+        const imageMessages = [
+            { title: "💝", image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400" },
+            { title: "🌸", image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400" },
+            { title: "✨", image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400" },
+        ];
+
         const sky = document.getElementById('sky');
         const modal = document.getElementById('modal');
         const modalTitle = document.getElementById('modalTitle');
         const modalMessage = document.getElementById('modalMessage');
+        const modalImage = document.getElementById('modalImage');
 
-        // Tạo sao
-        for (let i = 0; i < 100; i++) {
+        // Giảm số sao cho mobile
+        const starCount = window.innerWidth < 768 ? 50 : 80;
+        for (let i = 0; i < starCount; i++) {
             const star = document.createElement('div');
             star.className = 'star';
             star.style.left = Math.random() * 100 + '%';
@@ -274,8 +304,15 @@
             sky.appendChild(star);
         }
 
-        // Tạo đèn trời
+        // Giới hạn số đèn tối đa trên màn hình
+        let lanternCount = 0;
+        const maxLanterns = window.innerWidth < 768 ? 8 : 12;
+
         function createLantern() {
+            // Không tạo thêm nếu đã đủ số lượng
+            if (lanternCount >= maxLanterns) return;
+            
+            lanternCount++;
             const lantern = document.createElement('div');
             lantern.className = 'lantern';
             
@@ -285,7 +322,17 @@
             lantern.style.left = startX + 'px';
             lantern.style.top = startY + 'px';
             
-            const messageData = messages[Math.floor(Math.random() * messages.length)];
+            // Random 50% text, 50% image
+            const isTextType = Math.random() < 0.5;
+            let messageData;
+            
+            if (isTextType) {
+                messageData = textMessages[Math.floor(Math.random() * textMessages.length)];
+                messageData.type = 'text';
+            } else {
+                messageData = imageMessages[Math.floor(Math.random() * imageMessages.length)];
+                messageData.type = 'image';
+            }
             
             lantern.innerHTML = `
                 <div class="lantern-body">
@@ -296,34 +343,48 @@
             
             lantern.addEventListener('click', (e) => {
                 e.stopPropagation();
-                modalTitle.textContent = messageData.title;
-                modalMessage.textContent = messageData.message;
-                modal.classList.add('active');
+                showModal(messageData);
             });
             
             sky.appendChild(lantern);
-            
             animateLantern(lantern, startX, startY);
+        }
+
+        function showModal(data) {
+            modalTitle.textContent = data.title;
+            
+            modalMessage.classList.remove('show');
+            modalImage.classList.remove('show');
+            
+            if (data.type === 'text') {
+                modalMessage.textContent = data.message;
+                modalMessage.classList.add('show');
+            } else {
+                modalImage.src = data.image;
+                modalImage.classList.add('show');
+            }
+            
+            modal.classList.add('active');
         }
 
         function animateLantern(lantern, startX, startY) {
             let y = startY;
             let x = startX;
-            const speed = 0.9 + Math.random() * 0.8;
-            const drift = (Math.random() - 0.5) * 0.5;
-            const sway = Math.random() * 20 - 10;
+            const speed = 1.2 + Math.random() * 0.6; // Tăng tốc độ bay
+            const drift = (Math.random() - 0.5) * 0.3;
+            const sway = Math.random() * 15 - 7.5;
             let time = 0;
             
             function animate() {
                 y -= speed;
-                x += drift + Math.sin(time * 0.02) * sway * 0.1;
+                x += drift + Math.sin(time * 0.015) * sway * 0.08;
                 time++;
                 
-                lantern.style.top = y + 'px';
-                lantern.style.left = x + 'px';
+                lantern.style.transform = `translate(${x - startX}px, ${y - startY}px)`;
                 
                 if (y < -100 || x < -100 || x > window.innerWidth + 100) {
                     lantern.remove();
+                    lanternCount--; // Giảm counter khi đèn biến mất
                 } else {
                     requestAnimationFrame(animate);
                 }
@@ -334,6 +395,7 @@
 
         function closeModal() {
             modal.classList.remove('active');
+            modalImage.src = '';
         }
 
         modal.addEventListener('click', (e) => {
@@ -342,12 +404,14 @@
             }
         });
 
-        // Tạo đèn trời liên tục
-        setInterval(createLantern, 800);
+        // Tăng thời gian spawn đèn lên
+        const spawnInterval = window.innerWidth < 768 ? 1200 : 1000;
+        setInterval(createLantern, spawnInterval);
         
-        // Tạo một số đèn ban đầu
-        for (let i = 0; i < 15; i++) {
-            setTimeout(createLantern, i * 300);
+        // Giảm số đèn ban đầu
+        const initialLanterns = window.innerWidth < 768 ? 5 : 8;
+        for (let i = 0; i < initialLanterns; i++) {
+            setTimeout(createLantern, i * 400);
         }
     </script>
 </body>
