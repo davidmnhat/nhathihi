@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đèn Trời Bay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0a1628 0%, #1a2842 100%);
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            touch-action: none;
+        }
+
+        .sky {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 3s infinite;
+            will-change: opacity;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .moon {
+            position: absolute;
+            top: 80px;
+            right: 120px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #fff 0%, #f0f0f0 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .moon {
+                width: 80px;
+                height: 80px;
+                top: 50px;
+                right: 30px;
+            }
+        }
+
+        .lantern {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s;
+            will-change: transform;
+        }
+
+        .lantern:active {
+            transform: scale(1.2);
+        }
+
+        .lantern-body {
+            width: 40px;
+            height: 60px;
+            position: relative;
+            background: linear-gradient(to right, #ff4500, #ff6b35, #ff8c42, #ff6b35, #ff4500);
+            border-radius: 40% 40% 35% 35%;
+            box-shadow: 
+                0 0 15px rgba(255, 140, 50, 0.9),
+                0 0 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .lantern-body::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 10px;
+            background: #8b0000;
+            border-radius: 50%;
+        }
+
+        .lantern-body::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 10px;
+            background: #8b0000;
+            border-radius: 50%;
+        }
+
+        .lantern-tassel {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background: #ffd700;
+        }
+
+        .lantern-tassel::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: #ffd700;
+            border-radius: 50%;
+        }
+
+        .lantern-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 25px;
+            height: 35px;
+            background: radial-gradient(ellipse, rgba(255, 255, 200, 0.9) 0%, transparent 70%);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255, 107, 53, 0.8);
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 20px;
+            }
+            .modal-content h2 {
+                font-size: 20px;
+            }
+        }
+
+        .modal-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .modal-image.show {
+            display: block;
+        }
+
+        .modal-content p {
+            color: #fff;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .modal-content p.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content p {
+                font-size: 16px;
+            }
+        }
+
+        .close-btn {
+            background: white;
+            color: #ff6b35;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .close-btn:active {
+            background: #ff6b35;
+            color: white;
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="sky" id="sky">
+        <div class="moon"></div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle"></h2>
+            <img id="modalImage" class="modal-image" src="" alt="Ảnh">
+            <p id="modalMessage"></p>
+            <button class="close-btn" onclick="closeModal()">Đóng</button>
+        </div>
+    </div>
+
+        <audio id="bgMusic" loop>
+        <source src="nhactt.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        //  DANH SÁCH LỜI NHẮN
+        const textMessages = [
+            { title: "Em Nhật dấu iu", message: "Chúc chị luôn tràn đầy niềm vui và hạnh phúc!" },
+            { title: "Bà già đáng ghét", message: "Chúc chị luôn mạnh khỏe và tràn đầy năng lượng" },
+            { title: "Vịu ơ", message: "Đừng phũ phàng em nữaaaa" },
+            { title: "Nhớ em điii", message: "Nhắn e nhiều lênnnnn" },
+            { title: "Dẫy nhaaaaa", message: "Từ từ có chồngggggg hoặc đừng :))))" },
+            { title: "Ngại qó hò kkk", message: "chờ emmmm nhaaaa <3 <3 <3" },
+        ];
+
+        //  DANH SÁCH HÌNH ẢNH
+        const imageMessages = [
+            //{ title: "hùuuu", image: "https://i.postimg.cc/4Nd1B2yn/IMG-0538-1.jpg" },
+            { title: "ố là la kakaka", image: "https://i.postimg.cc/y882hT4T/1-IVABCIGL-3-LJ937.jpg" },
+           { title: "úm ba la", image: "https://i.postimg.cc/Z55XPLtj/e5fecf1a2b9832edbf765c0b12d6f67d.jpg" },
+            { title: "Chị Dân lùn", image: "https://i.postimg.cc/Vkk29FQW/fe90d974049332a23736e6e228164df7.jpg" },
+           // { title: "ehehehehe", image: "https://i.postimg.cc/jdF496nv/IMG-20250603-162814.jpg" },
+            //{ title: "nhớ em đi mò", image: "https://i.postimg.cc/xdryj0RV/T-p-000.png" },
+            //{ title: "đừng lạnh lùng vị mà", image: "https://i.postimg.cc/QCXV0zqT/769036c1bc68b8b36b4b3d7a533815c0.jpg" },
+            { title: "chúc e ngủ ngoan điii", image: "https://i.postimg.cc/gjNj5KMj/z7065059254590-06d1d4bfc86527ec2803fa4e90feab97.jpg" },
+            { title: "mất ngủ vì chụy <3", image: "https://i.postimg.cc/Dyw8GtZL/d364c8fb4ac538242c1f5961226c9978.jpg" },
+            { title: "thần men đại bịp", image: "https://i.postimg.cc/9Q408ZyF/fd798204396855667400084f46147193.jpg" },
+        ];
+
+        const sky = document.getElementById('sky');
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalImage = document.getElementById('modalImage');
+
+        // Giảm số sao cho mobile
+        const starCount = window.innerWidth < 768 ? 50 : 80;
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            sky.appendChild(star);
+        }
+
+        // Giới hạn số đèn tối đa trên màn hình
+        let lanternCount = 0;
+        const maxLanterns = window.innerWidth < 768 ? 8 : 12;
+
+        function createLantern() {
+            // Không tạo thêm nếu đã đủ số lượng
+            if (lanternCount >= maxLanterns) return;
+            
+            lanternCount++;
+            const lantern = document.createElement('div');
+            lantern.className = 'lantern';
+            
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight + 100;
+            
+            lantern.style.left = startX + 'px';
+            lantern.style.top = startY + 'px';
+            
+            // Random 50% text, 50% image
+            const isTextType = Math.random() < 0.5;
+            let messageData;
+            
+            if (isTextType) {
+                messageData = textMessages[Math.floor(Math.random() * textMessages.length)];
+                messageData.type = 'text';
+            } else {
+                messageData = imageMessages[Math.floor(Math.random() * imageMessages.length)];
+                messageData.type = 'image';
+            }
+            
+            lantern.innerHTML = `
+                <div class="lantern-body">
+                    <div class="lantern-glow"></div>
+                </div>
+                <div class="lantern-tassel"></div>
+            `;
+            
+            lantern.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showModal(messageData);
+            });
+            
+            sky.appendChild(lantern);
+            animateLantern(lantern, startX, startY);
+        }
+
+        function showModal(data) {
+            modalTitle.textContent = data.title;
+            
+            modalMessage.classList.remove('show');
+            modalImage.classList.remove('show');
+            
+            if (data.type === 'text') {
+                modalMessage.textContent = data.message;
+                modalMessage.classList.add('show');
+            } else {
+                modalImage.src = data.image;
+                modalImage.classList.add('show');
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function animateLantern(lantern, startX, startY) {
+            let y = startY;
+            let x = startX;
+            const speed = 1 + Math.random() * 0.8; // Tăng tốc độ bay
+            const drift = (Math.random() - 0.5) * 0.3;
+            const sway = Math.random() * 15 - 7.5;
+            let time = 0;
+            
+            function animate() {
+                y -= speed;
+                x += drift + Math.sin(time * 0.015) * sway * 0.08;
+                time++;
+                
+                lantern.style.transform = `translate(${x - startX}px, ${y - startY}px)`;
+                
+                if (y < -100 || x < -100 || x > window.innerWidth + 100) {
+                    lantern.remove();
+                    lanternCount--; // Giảm counter khi đèn biến mất
+                } else {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            animate();
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            modalImage.src = '';
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Tăng thời gian spawn đèn lên
+        const spawnInterval = window.innerWidth < 768 ? 1000 : 1000;
+        setInterval(createLantern, spawnInterval);
+        
+        // Giảm số đèn ban đầu
+        const initialLanterns = window.innerWidth < 768 ? 5 : 8;
+        for (let i = 0; i < initialLanterns; i++) {
+            setTimeout(createLantern, i * 400);
+        }
+
+        const bgMusic = document.getElementById('bgMusic');
+        let hasPlayed = false;
+
+        // Khi click lần đầu tiên vào màn hình => phát nhạc
+        document.body.addEventListener('click', () => {
+            if (!hasPlayed) {
+                bgMusic.play().catch(err => console.log("Không thể phát nhạc:", err));
+                hasPlayed = true;
+            }
+        });
+        
+    </script>
+</body>
+</html>
